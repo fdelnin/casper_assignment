@@ -22,10 +22,11 @@
  \hline
  casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &   \\
  casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY &   \\
- casper6 &  &  \\
+ casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o &  \\
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & \\
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
+ casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
  casper82 & MABIQpR4omrMCmdc7PwxbRNm5EPHzYX5 & \\
  casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA &\\
 \end{tabular}
@@ -39,11 +40,11 @@ Program casper4 takes an input from the user and prints a greeting and the input
 
 \subsection{Vulnerability}
 
-This program is vulnerable because it calls \texttt{strcpy} function passing the (char) pointer \texttt{s} without doing a bound check on the length of the variable pointed, so it can be longer than 666 byte, which is the length of the \texttt{buf} array in which the content will be copied.
+This program is vulnerable because it calls \texttt{strcpy} function passing the (char) pointer \texttt{s} without doing a bound check on the length of the variable pointed, so it can be longer than 666 byte (or the 674 allocated), which is the length of the \texttt{buf} array in which the content will be copied.
 
 \subsection{Exploit description}
 
-To exploit this level I first needed to know how many characters fill the buffer and overwrite the return address of \texttt{greetUser}. To find this number I used gdb, put a breakpoint inside the \texttt{greetUser} function and runned the program, the address of the buffer is:. Then, by using \texttt{info frame} command I'm able to see at which address is stored the eip register where the return address is stored. The distance between the two is 678 byte, so adding another 4 byte I'm able to make a buffer overflow attack.
+To exploit this level I first needed to know how many characters fill the buffer and overwrite the return address of \texttt{greetUser}. To find this number I used gdb, put a breakpoint inside the \texttt{greetUser} function and runned the program, the address of the buffer is:. Then, by using \texttt{info frame} command I'm able to see at which address is stored the eip register where the return address is stored. The distance between the two is 678 byte, so by adding another 4 byte I'm able to make a buffer overflow attack.
 
 I provide as input a string of 682 byte in total composed as following:
 \begin{enumerate}
@@ -55,7 +56,7 @@ I provide as input a string of 682 byte in total composed as following:
 
 %./casper4 $(python -c "print('\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x78\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\xcd\x80'+'A'*(674-21)+'\x16\xf4\xff\xbf');")
 
-In this way we fill the whole buffer and we overwrite the return address (and the frame pointer too) of the function, so when the execution of greetUser is done the instruction inside the buffer (so the shellcode) will be executed instead of returning to main. 
+In this way I fill the whole buffer and overwrite the return address (and the frame pointer too) of the function, so when the execution of \texttt{greetUser} is done the instruction inside the buffer (so the shellcode) will be executed instead of returning to main. 
 
 The NOP instructions at the beginning of the buffer are to make sure that even if the address of the buffer is not precise (due to the program being run inside gdb), the shellcode will be executed because is preceded just by NOP instructions.
 
@@ -65,7 +66,7 @@ The NOP instructions at the beginning of the buffer are to make sure that even i
 
 \subsection{Advanced level casper41}
 
-This exploit works also with casper41 because it only checks for environment variables which are not used for the exploit. I just need to update the address of the buffer, found using gdb on the binary file of casper41.
+This exploit works also with casper41 because it only checks for environment variables which are not used for the exploit. I just need to update the address of the buffer, using gdb on the binary file of casper41.
 
 
 
@@ -79,11 +80,17 @@ This program prints a greeting to the user when provided an input, it uses a str
 
 \subsection{Vulnerability}
 
-This program is vulnerable because we can overwrite the function pointer, which is just above the buffer in stack.
+This program is vulnerable because it is possible to overwrite the function pointer, which is store just above the buffer.  The struct is not stored in the stack because it's a global variable and it's stored in the data segment of the memory, so even if the stack is non-executable it's still possible to run an overflow attack.
+
 
 \subsection{Exploit description}
 
+
+
+
 \subsection{Mitigation}
+
+
 
 \section{casper8}
 \subsection{Description}
@@ -128,7 +135,7 @@ The same approach work also for this advanced level because it only checks for N
 
 \subsection{Advanced level casper82}
 
-The same approach works also for casper82, because it checks for ASCII characters just for the length of the buffer, so if I fill the whole buffer with A's and only after use the ascii characters to overwrite the return address the attack will still work. The exploit in this case is exactly the same as casper80.
+The same approach works also for casper82, because it checks for non-ASCII characters just for the length of the buffer, so if I fill the whole buffer with A's and only after use the non ascii characters to overwrite the return address the attack will still work. The exploit in this case is exactly the same as casper80 with environmental variables.
 
 
 
@@ -168,3 +175,12 @@ The string provided as input is:
 
 \subsection{Mitigation}
 \end{document}
+
+to exploit this level i :
+run gdb using make to get the different addresses of system and exit and buffer
+
+managed to print spaces in the buffer
+
+insert bin xh inside space
+
+try a few times the address of buffer(to get the right one I printed B and A before and after the buffer to have an idea on where i was pointing looking at the error launched by system function, then once bin xh compared between the b and a I inserted spaces to get it ignore them)
