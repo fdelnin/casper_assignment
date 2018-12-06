@@ -24,6 +24,7 @@
  casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY &   \\
  casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o &  \\
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & \\
+ casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & \\
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
@@ -80,62 +81,90 @@ This program prints a greeting to the user when provided an input, it uses a str
 
 \subsection{Vulnerability}
 
-This program is vulnerable because it is possible to overwrite the function pointer, which is store just above the buffer.  The struct is not stored in the stack because it's a global variable and it's stored in the data segment of the memory, so even if the stack is non-executable it's still possible to run an overflow attack.
+This program is vulnerable because it is possible to overwrite the function pointer, which is stored just above the buffer.  The struct is not stored in the stack because it's a global variable and it's stored in the data segment of the memory, so even if the stack is non-executable it's still possible to run an overflow attack.
 
 
 \subsection{Exploit description}
 
+To exploit this level I get the address of somedata.buffer and somedata.fp through gdb, in this way I know how many characters I need to reach the function pointer and overwrite its content (668 bytes).
 
+The string I pass as input is composed as follows:
+\begin{enumerate}
+\item some NOP instruction
+\item shellcode (21 bytes)
+\item some more NOP to fill the buffer
+\item the address of the buffer
+\end{enumerate}
+
+Since the address of the buffer running the program inside gdb and without it can vary a bit, the NOP instructions at the beggining are necessary to make sure that the exploit works even if the address of the buffer varies a bit.
 
 
 \subsection{Mitigation}
 
+One way that can mitigate this attack is using ASLR(Address)
+which makes more difficult retrieving the address of the buffer since it will vary at every execution of the program.
 
+
+\subsection{Advanced level casper61}
+
+This program adds an additional check at the environmental variables (that can be used to store the shellcode), the same approach of casper6 can be used also here, I just changed the buffer address.
 
 \section{casper8}
 \subsection{Description}
 
-This level prints a greeting to the user as the other levels, but in this case the stack is non-executable so it's not possible to do a stack based buffer overflow.
+This level prints a greeting to the user as the other levels, but in this case the stack is non-executable so it's not possible to do a stack based buffer overflow, but canaries are not enabled.
+
 \subsection{Vulnerability}
 
 In this case the vulnerability is given by the use of the library 
 
 \subsection{Exploit description} 
 
-To make this exploit work I first looked for how many input characters make the program go in segmentation fault, then I verified that I was overwriting also EIP register using the "info frame" command after the execution of strcpy inside greetUser and found out that I need a total of 682 byte to complete overwrite the return address of greetUser.
+To make this exploit work I first looked for how many input characters make the program go in segmentation fault, then I verified that I was overwriting the whole EIP register (where the return address is stored) using the "info frame" command after the execution of strcpy inside \texttt{greetUser} and found out that I need a total of 682 byte to completely overwrite the return address of \texttt{greetUser}.
 
-Then I searched for the address of the \texttt{system} function (which execute a shell command) inside libc, which is loaded because it's included in the program. I used gdb command \texttt{p \&system} while running the program and I found that the address is 0xb7e62310. Since I want to pass as argument to this function the string "/bin/xh", which is not present inside the loaded library, I created a new environment variable (through export MYSHELL=/bin/xh).
- To find out the address in which is stored I used the command \texttt{x/s *((char **)environ)} and went through the variables until I found MYSHELL at   *((char **)environ+19) at the address 0xbfffff3f, so to make it point just to "/bin/xh" (without "MYSHELL=") the address is 0xbfffff47.
+Then I searched for the address of the \texttt{system} function (which execute a shell command) inside libc, which is loaded because it's included in the program. I used gdb command \texttt{p \&system} while running the program using make. Since I want to pass as argument to this function the string "/bin/xh", which is not present inside the loaded library, I created a new environment variable, since the exact address can vary a bit the variable contains some spaces and only then "/bin/xh".
+ To find out the address in which is stored I used the command \texttt{x/s *((char **)environ)} and went through the variables until I found MYSHELL at   *((char **)environ+19)% at the address 0xbfffff3f
+.
  
-To make it a cleaner attack I also searched for the address of the \texttt{exit} function inside the library to pass it as return address of the system function. I used the same command as above and found it at 0xb7e55260.
+To make it a cleaner attack I also searched for the address of the \texttt{exit} function inside the library to pass it as return address of the system function.
 
 To make the exploit work I passed a string composed as following:
 \begin{itemize}
 \item 682-4=678 A's;
 \item \texttt{system} function address (endian encoded);
 \item \texttt{exit} function address (endian encoded);
-\item the address of the string "/bin/xh" (endian encoded).
+\item the address of the environmental variable (endian encoded).
 \end{itemize}
 
-This attack worked inside gdb but not outside because the address of the environmental variables can change a bit, the error displayed was telling "bin/xh: not found" so the string passed was missing a "/". Changing the address of the string to 0xbfffff46 did the trick.
+%This attack worked inside gdb but not outside because the address of the environmental variables can change a bit, the error displayed was telling "bin/xh: not found" so the string passed was missing a "/". Changing the address of the string to 0xbfffff46 did the trick.
 
 \subsection{Mitigation}
 
 This attack was possible even if the stack is non-executable, so it requires additional measures.
 
-Adding canaries can help detecting if a return address of a function id being overwritten but if the attacker is able to read this value it can overwrite it with the same value.
+Adding canaries can help detecting if a return address of a function has been overwritten, but if the attacker is able to read this value it can overwrite it with the same value.
 
-Enabling ASLR (Address Space Layout Randomization) can make it more difficult because the location of the stack, heap and library can vary each time the program is launched, so it became difficult to retrieve the address of the functions to which an attacker wants to jump.
+Enabling ASLR (Address Space Layout Randomization) can make it more difficult because the location of the stack, heap and library can vary each time the program is launched, so it becames difficult to retrieve the address of the functions to which an attacker wants to jump.
 
 
 
 \subsection{Advanced level casper80}
 
-The same approach work also for this advanced level because it only checks for NOP in the input. To make it work I checked again the distance from the buffer to the return address of \texttt{greetUser} function, this time it has changed to 682 byte (so 686 to overwrite it). I also changed the address of the string because the address of the environmental variable MYSHELL changes a bit, to make it work I used 0xbfffff44. To get this value I read the error message displayed with the address used in the other exploit and there where two characters missing.
+The same approach work also for this advanced level because it only checks for NOP in the input. To make it work I checked again the distance from the buffer to the return address of \texttt{greetUser} function, this time it has changed to 682 byte (so 686 to overwrite it). % I also changed the address of the string because the address of the environmental variable MYSHELL changes a bit, to make it work I used 0xbfffff44. To get this value I read the error message displayed with the address used in the other exploit and there where two characters missing.
+\subsection{Advanced level casper81}
+This level checks for the environmental variables so to exploit it I changed the approach. The stack is non-executable but it's still possible to use the stack to store the string we want to pass as argument to the \texttt{system} function.
+
+To make it work I filled the buffer with some spaces, the string, some other spaces and then the address of the system function, followed by the exit function and then the address of the buffer.
+
+Before using the spaces I filled the buffer with some A's before /bin/xh and some B's after, in this way I was able to understand (by reading the error) if I was pointing somewhere after the /bin/xh string.
+
+To make it possible to store spaces inside the buffer I used the bash script.
+
+
 
 \subsection{Advanced level casper82}
 
-The same approach works also for casper82, because it checks for non-ASCII characters just for the length of the buffer, so if I fill the whole buffer with A's and only after use the non ascii characters to overwrite the return address the attack will still work. The exploit in this case is exactly the same as casper80 with environmental variables.
+The same approach of casper8 works also for casper82, because it checks for non-ASCII characters just for the length of the buffer, so if I fill the whole buffer with A's and only after use the non ascii characters to overwrite the return address the attack will still work. The exploit in this case is exactly the same as casper80 with environmental variables.
 
 
 
@@ -150,17 +179,17 @@ This program prints a greeting to the user if it's provided an input string, the
 
 This programs contains a format-string vulnerability, this makes it possible to change the value of the flag even if canaries and non-executable stack are enabled.
 
-A format string is an ASCIIZ string that contains text and format parameters, if the attacker provides in input format parameters (like \%s) instead of a string it can read and write in memory, for example the parameter \%x read data from the stack and prints it %pops from stack.
+A format string is an ASCIIZ string (string is terminated by the \\0 character) that contains text and format parameters, if the attacker provides in input format parameters (like \%s) instead of a string it can read and write in memory, for example the parameter \%x read data from the stack and prints it %pops from stack.
 
 \subsection{Exploit description}
 
 To make this attack work I have to read from the memory the location of the \texttt{isAdmin} variable and use the string vulnerability to change it (any value beside 0 will work since it's a binary variable). 
 
-To do so I will use the \%n parameter which writes the number of bytes already printed, into a variable we can choose, in this case \texttt{isAdmin}. Before being able to do so I need to move the stack pointer to a location where there is the address of \texttt{isAdmin}, for example the beginning of the buffer, of which I can provide the content.
+To do so I will use the \%n parameter which writes the number of bytes already printed, into a variable we can choose, in this case \texttt{isAdmin}. Before being able to do so I need to move the stack pointer to a location where there I can store the address of \texttt{isAdmin}, for example the beginning of the buffer.
 
 To move at the beginning of the buffer I use \%x, which reads from the stack and goes towards higher addresses (so towards the top of the stack), the buffer is stored in higher address because is pushed into the stack before the call to the function printf.
 
-Filling the buffer with some 'A''s characters and some \%08x parameters (08 makes it print in exadecimal) will print back the A's (x41), at this point I know the number of \%x parameter I need to reach the beginning of the buffer.
+Filling the buffer with some A's characters and some \%08x parameters (08 makes it print in exadecimal) will print back the A's (x41), at this point I know the number of \%x parameter I need to reach the beginning of the buffer.
 
 At this point if I write the address of the variable instead of the first four 'A's and add a \%n parameter I'm able to write some value in that address, or in other words change the value of the flag.
 
@@ -168,12 +197,14 @@ The string provided as input is:
 \begin{itemize}
 \item the address of the \texttt{isAdmin} variable (retrieved through gdb, little-endian encoded),
 \item nine \%80x parameter to reach the beginning of the buffer,
-\item \%n to write in the address.
+\item \texttt{\%n} to write in the address.
 \end{itemize}
 
 
-
 \subsection{Mitigation}
+
+To make this program more secure it's better to use a different function instead of \texttt{printf}, also using ASLR will make more difficult to retrieve the address of the variable we want to write to.
+
 \end{document}
 
 to exploit this level i :
