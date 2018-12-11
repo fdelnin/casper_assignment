@@ -17,17 +17,20 @@
 
 \section{Overview}
 \begin{table}[]
-\begin{tabular}{lll}
+\begin{tabular}{l|l|l}
  Level & Password & Time spent  \\
  \hline
  casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &   \\
  casper40 & hcRzYRX24hMUQfGN4comHv8pXgl7rgiK & \\
  casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY &   \\
+ casper5 & LzroSg7w54LlHxKZbHVEGYj2UPs1WEUG & \\
+ casper50 & SuzPtkbto6T8w0H43MQimqOoH7ntIoVh & \\
+ casper51 & TOv1elxDKtaFgGfWTyyLQ2uzivxI36X4 & \\
+ casper52 & rWhAgxz2U89eRx57LyCmEWunbCW39fAO & \\
  casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o &  \\
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & \\
  casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & \\
  casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & \\
-
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
@@ -39,7 +42,7 @@
 \newpage
 \section{Casper4 solution}
 \subsection{Description}
-Program casper4 takes an input from the user and prints a greeting and the input from the user. If no input is provided it prints an explanation on how to use the program and exit.
+Program casper4 takes an input from the user and prints a greeting and the input from the user. If no input is provided it prints an explanation on how to use the program and exits.
  
 
 \subsection{Vulnerability}
@@ -119,7 +122,7 @@ This level prints a greeting to the user as the other levels, but in this case t
 
 \subsection{Vulnerability}
 
-In this case the vulnerability is given by the use of the library 
+In this case the vulnerability is given by the use of the strcpy function allow us to overflow the return address of greetUser, and the use of library 
 
 \subsection{Exploit description} 
 
