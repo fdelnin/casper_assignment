@@ -5,22 +5,31 @@
 \BOOKMARK [2][-]{subsection.2.3}{Exploit description}{section.2}% 5
 \BOOKMARK [2][-]{subsection.2.4}{Mitigation}{section.2}% 6
 \BOOKMARK [2][-]{subsection.2.5}{Advanced level casper41}{section.2}% 7
-\BOOKMARK [1][-]{section.3}{casper6}{}% 8
-\BOOKMARK [2][-]{subsection.3.1}{Description}{section.3}% 9
-\BOOKMARK [2][-]{subsection.3.2}{Vulnerability}{section.3}% 10
-\BOOKMARK [2][-]{subsection.3.3}{Exploit description}{section.3}% 11
-\BOOKMARK [2][-]{subsection.3.4}{Mitigation}{section.3}% 12
-\BOOKMARK [2][-]{subsection.3.5}{Advanced level casper61}{section.3}% 13
-\BOOKMARK [1][-]{section.4}{casper8}{}% 14
-\BOOKMARK [2][-]{subsection.4.1}{Description}{section.4}% 15
-\BOOKMARK [2][-]{subsection.4.2}{Vulnerability}{section.4}% 16
-\BOOKMARK [2][-]{subsection.4.3}{Exploit description}{section.4}% 17
-\BOOKMARK [2][-]{subsection.4.4}{Mitigation}{section.4}% 18
-\BOOKMARK [2][-]{subsection.4.5}{Advanced level casper80}{section.4}% 19
-\BOOKMARK [2][-]{subsection.4.6}{Advanced level casper81}{section.4}% 20
-\BOOKMARK [2][-]{subsection.4.7}{Advanced level casper82}{section.4}% 21
-\BOOKMARK [1][-]{section.5}{casper10}{}% 22
-\BOOKMARK [2][-]{subsection.5.1}{Description}{section.5}% 23
-\BOOKMARK [2][-]{subsection.5.2}{Vulnerability}{section.5}% 24
-\BOOKMARK [2][-]{subsection.5.3}{Exploit description}{section.5}% 25
-\BOOKMARK [2][-]{subsection.5.4}{Mitigation}{section.5}% 26
+\BOOKMARK [2][-]{subsection.2.6}{Advanced level casper40}{section.2}% 8
+\BOOKMARK [2][-]{subsection.2.7}{Advanced level casper42}{section.2}% 9
+\BOOKMARK [1][-]{section.3}{casper5}{}% 10
+\BOOKMARK [2][-]{subsection.3.1}{Description}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.2}{Vulnerability}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.3}{Exploit description}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.4}{Mitigation}{section.3}% 14
+\BOOKMARK [1][-]{section.4}{casper6}{}% 15
+\BOOKMARK [2][-]{subsection.4.1}{Description}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.2}{Vulnerability}{section.4}% 17
+\BOOKMARK [2][-]{subsection.4.3}{Exploit description}{section.4}% 18
+\BOOKMARK [2][-]{subsection.4.4}{Mitigation}{section.4}% 19
+\BOOKMARK [2][-]{subsection.4.5}{Advanced level casper61}{section.4}% 20
+\BOOKMARK [2][-]{subsection.4.6}{Advanced level casper60}{section.4}% 21
+\BOOKMARK [2][-]{subsection.4.7}{Advanced level casper62}{section.4}% 22
+\BOOKMARK [1][-]{section.5}{casper8}{}% 23
+\BOOKMARK [2][-]{subsection.5.1}{Description}{section.5}% 24
+\BOOKMARK [2][-]{subsection.5.2}{Vulnerability}{section.5}% 25
+\BOOKMARK [2][-]{subsection.5.3}{Exploit description}{section.5}% 26
+\BOOKMARK [2][-]{subsection.5.4}{Mitigation}{section.5}% 27
+\BOOKMARK [2][-]{subsection.5.5}{Advanced level casper81}{section.5}% 28
+\BOOKMARK [2][-]{subsection.5.6}{Advanced level casper80}{section.5}% 29
+\BOOKMARK [2][-]{subsection.5.7}{Advanced level casper82}{section.5}% 30
+\BOOKMARK [1][-]{section.6}{casper10}{}% 31
+\BOOKMARK [2][-]{subsection.6.1}{Description}{section.6}% 32
+\BOOKMARK [2][-]{subsection.6.2}{Vulnerability}{section.6}% 33
+\BOOKMARK [2][-]{subsection.6.3}{Exploit description}{section.6}% 34
+\BOOKMARK [2][-]{subsection.6.4}{Mitigation}{section.6}% 35
