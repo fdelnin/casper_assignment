@@ -105,7 +105,7 @@ So the string provided in input is:
 \item the address of the environmental variable
 \end{itemize}
 
-To get the correct address of the environmental variable I used gdb (\texttt{x/s *((char **)environ))} which shows the environmental vars and their address. I found out that the address is 0xbffff8b4. To make this exploit work I changed a bit the address to be sure that it points between the NOP's (final address 0xbffff880).
+To get the correct address of the environmental variable I used gdb \texttt{x/s *((char **)environ))} which shows the environmental vars and their address. I found out that the address is 0xbffff8b4. To make this exploit work I changed a bit the address to be sure that it points between the NOP's (final address 0xbffff880).
 
 As last thing in the bash script I remove the environmental variable.
 
