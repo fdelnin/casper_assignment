@@ -14,8 +14,11 @@
 \begin{document}
 \maketitle
 
+\tableofcontents
 
+\newpage
 \section{Overview}
+Passwords retrieved:
 \begin{table}[]
 \begin{tabular}{l|l|l}
  Level & Password & Time spent  \\
@@ -23,18 +26,23 @@
  casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &   \\
  casper40 & hcRzYRX24hMUQfGN4comHv8pXgl7rgiK & \\
  casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY & \\
+ casper42 & 1RbjDY7vpb1RvjvLiAN9skfLL3MTZABD & \\
+  \hline
  casper5 & LzroSg7w54LlHxKZbHVEGYj2UPs1WEUG & \\
  casper50 & SuzPtkbto6T8w0H43MQimqOoH7ntIoVh & \\
  casper51 & TOv1elxDKtaFgGfWTyyLQ2uzivxI36X4 & \\
  casper52 & rWhAgxz2U89eRx57LyCmEWunbCW39fAO & \\
+  \hline
  casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o &  \\
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & \\
  casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & \\
  casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & \\
+  \hline
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
  casper82 & MABIQpR4omrMCmdc7PwxbRNm5EPHzYX5 & \\
+  \hline
  casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA &\\
 \end{tabular}
 \end{table}
@@ -87,7 +95,7 @@ This exploit works also with casper41 because it only checks for environment var
 
 This level has an additional check compared to level4: it looks for NOP instructions inside the string provided in input. To exploit this level I used a different approach: instead of storing the shellcode inside the buffer I stored it in a new environmental variable (together with some NOP instruction).  
 
-In this way I am able to fill the buffer with A's and the address of the variable (which does not contain \\x90)
+In this way I am able to fill the buffer with A's and the address of the variable (which does not contain \textbackslash x90)
 
 Also the distance between the buffer and the return address is changed, now I need 682 byte to reach it (686 to overwrite it).
 
@@ -132,13 +140,21 @@ Keeping the input open (with cat -) makes it possible to use the shell when it's
 
 \subsection{Mitigation}
 
-To mitigate this attack the length of the input provided by user should be checked, the function \texttt{gets} should be replaced with the safer version \texttt{fget} which has an additional arguments that tells how many characters can by copied.
+To mitigate this attack the length of the input provided by the user should be checked, the function \texttt{gets} should be replaced with the safer version \texttt{fgets} which has an additional arguments that tells how many characters can by copied.
 
 \subsection{Advanced level casper51}
 The same exploit of the level casper5 works also for this program because in casper51 is added a control on the environmental variables which are not used for the attack. 
 
 
 \subsection{Advanced level casper50}
+
+To exploit this level, which checks for NOP instruction for the entire length of the input provided I used an environmental variable to store the shellcode (together with some NOP's), filled the buffer with A's and overwrite the return address with the address of the environmental variable.
+
+In this case I also needed to add four bytes in the input string since the distance between the buffer and the return address has changed.
+
+\subsection{Advanced level casper52}
+
+This level checks non ascii characters for the expected length of the buffer (666 bytes), the same exploit used in casper50 works also for this level because the first 666 characters are A's.
 
 \section{casper6}
 % ./casper6 $(python -c "print('\x90'*(668-21)+'\x31\xc9\xf7\xe1\x51\x68\x2f\x2f\x78\x68\x68\x2f\x62\x69\x6e\x89\xe3\xb0\x0b\xcd\x80'+'\x01\x98\x04\x08');")
@@ -177,7 +193,7 @@ The string I pass as input is composed as follows:
 
 Since the address of the buffer running the program inside gdb and without it can vary a bit, some NOP instructions at the beginning are necessary to make sure that the exploit still works.
 
-The address of the buffer appears to contain the \\x00 value, which is ignored by the shell, so I changed the last byte to 01. In this case this small changes it's enough to land inside the buffer between the NOP instructions, but it's also possible to write a higher address to be sure that it's pointing inside the NOPs even if the address is changed a bit.  
+The address of the buffer appears to contain the \textbackslash x00 value, which is ignored by the shell, so I changed the last byte to 01. In this case this small changes it's enough to land inside the buffer between the NOP instructions, but it's also possible to write a higher address to be sure that it's pointing inside the NOPs even if the address is changed a bit.  
 
 \subsection{Mitigation}
 
@@ -296,39 +312,54 @@ The relevant variables are:
 
 \subsection{Vulnerability}
 
-This programs contains a format-string vulnerability, this makes it possible to change the value of the flag even if canaries and non-executable stack are enabled.
+This programs contains a format-string vulnerability, this makes it possible to change the value of the \texttt{is Admin} flag even if canaries and non-executable stack are enabled.
 
-A format string is an ASCIIZ string (string is terminated by the \\0 character) that contains text and format parameters, if the attacker provides in input format parameters (like \%s) instead of a string it can read and write in memory, for example the parameter \%x read data from the stack and prints it %pops from stack.
+A format function like \texttt{printf} expect as input a format string, that is a string that contains text and format specifiers. If the attacker provides in input format parameters (specified by \%) inside a string it can read and write in memory. 
+
+In particular:
+\begin{itemize}
+\item \texttt{\%n} specifier allow to write the number of characters that have already been formatted to a specific place in memory,
+\item and \texttt{\%x} prints the value of an integer, to do this pop values out of the stack.
+\end{itemize} 
+
+So by using \texttt{\%x} an attacker can reach a place in memory where he/she wants to write and then use \texttt{\%n} to write in that place in memory.
+
+ %for example the parameter \%x read data from the stack and prints it %pops from stack.
 
 \subsection{Exploit description}
 
-To make this attack work I have to read from the memory the location of the \texttt{isAdmin} variable and use the string vulnerability to change it (any value beside 0 will work since it's a binary variable). 
+To make this attack work I have to retrieve the address of \texttt{isAdmin} variable and use the format string vulnerability to change it (any value except 0 will work since it's a binary variable). 
 
-To do so I will use the \%n parameter which writes the number of bytes already printed, into a variable we can choose, in this case \texttt{isAdmin}. Before being able to do so I need to move the stack pointer to a location where I can store the address of \texttt{isAdmin}, for example the beginning of the buffer.
+To do so I will use the \texttt{\%n} parameter which writes the number of bytes already printed, into a variable we can choose, in this case \texttt{isAdmin}. Before being able to do so I need to move the stack pointer to a location where I can store the address of \texttt{isAdmin}, for example the beginning of the buffer.
 
-To move at the beginning of the buffer I use \%x, which reads from the stack and goes towards higher addresses (so towards the top of the stack), the buffer is stored in higher address because is pushed into the stack before the call to the function \texttt{printf}.
+To move at the beginning of the buffer I use \texttt{\%x}, which reads from the stack and goes towards lower addresses (so towards the bottom of the stack), the buffer is stored in a lower address because is pushed into the stack before the call to the function \texttt{printf}.
 
-Filling the buffer with some A's characters and some \%08x parameters (08 makes it print in exadecimal) will print back the A's (x41), at this point I know the number of \%x parameter I need to reach the beginning of the buffer.
+Filling the buffer with some A's characters and some \texttt{\%80x} parameters (08 makes it print in 8 digit exadecimal number) will print back the A's (x41), at this point I know the number of \texttt{\%x} parameter I need to reach the beginning of the buffer.
 
-At this point if I write the address of the variable instead of the first four 'A's and add a \%n parameter I'm able to write some value in that address, or in other words change the value of the flag.
+At this point if I write the address of the variable instead of the first four 'A's and add a \texttt{\%n} parameter I'm able to write some value in that address, or in other words change the value of the flag.
 
 The string provided as input is:
 \begin{itemize}
 \item the address of the \texttt{isAdmin} variable,
-\item nine \%80x parameter to reach the beginning of the buffer,
+\item nine \texttt{\%80x} parameters to reach the beginning of the buffer,
 \item \texttt{\%n} to write in the address.
 \end{itemize}
 
 
 \subsection{Mitigation}
 
-To make this program more secure it's better to use a different function instead of \texttt{printf}.
-Also enabling ASLR will make more difficult to retrieve the address of the variable an attacker wants to use. 
-Add \%s 
 
-\newpage
+To make this program more secure it's better enable ASLR (Address Space Layout Randomization,)that will make more difficult to retrieve the address of the variable an attacker wants to change. 
+
+
 \section{Notes}
+\begin{enumerate}
 
-The shellcode used in all levels that requires it is the one suggested in the website with one byte changed to launch /bin/xh instead of /bin/sh (replacing \\x73 with \\x78).
+
+\item The shellcode used in all levels that require it is the one suggested in the assignment website, with one byte changed to launch /bin/xh instead of /bin/sh (replacing \textbackslash x73 with \textbackslash x78).
+
+
+\item All attacks can be launched using \texttt{make exploit\textit{n}}, all attacks except level 8 (and 80 81 82) can also be launched with \texttt{./exploit\textit{n}.sh}
+\end{enumerate}
 
 \end{document}
