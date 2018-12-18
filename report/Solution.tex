@@ -38,6 +38,11 @@ Passwords retrieved:
  casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & \\
  casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & \\
   \hline
+  casper7 & OEhxYs88CiZLNXnFs3NV9Tu9IAY4CLhu & \\
+  casper70 & 5qxWx5fVrtK0g21indUP4MHEauEclQ3D & \\
+  casper71 & YojCanKvrijSB4rYLiG06BZiASkrChK9 & \\
+  casper72 & Yt8DOcwgDID1ie51GBP0SOLjMUHdBrvd & \\
+  \hline
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
@@ -225,6 +230,40 @@ The string provided as input is:
 \subsection{Advanced level casper62}
 
 The same exploit of casper60 works for casper62 because this level checks for non ascii character but only for the expected length of the buffer (666 bytes) and not for the entire string provided.
+\section{casper7}
+\subsection{Description}
+This level is similar to casper6, however it takes input from stdin instead as argument to main.
+
+
+\subsection{Vulnerability}
+This program is vulnerable because \texttt{gets} function does not check for the length of the input, so it's possible to overwrite the function pointer of the struct.
+
+\subsection{Exploit description} 
+
+To exploit this level I first checked for the distance between somedata.buf and somedata.fp, which is 668 bytes.
+So I filled the buffer with some NOP, the shellcode, some other NOP (in total 668 bytes) and then the address of the buffer.
+
+
+
+\subsection{Mitigation}
+
+To mitigate this attack a check of the length of the string in input it's necessary, this can be done by replacing \texttt{gets} with the safer version \texttt{fgets} which also has the length parameter.
+
+Another thing that can help mitigate this attack is using ASLR(Address Space Layput Randomization)
+which makes more difficult retrieving the address of the buffer since it will vary at every execution of the program.
+
+Also if the buf variable and the function pointer are stored in the revers order this attack it's not possible because overflowing the buffer would not lead to the function pointer.
+
+\subsection{Advanced level casper71}
+This program cleans the environmental variables, which I did not use to exploit casper7. However to make the attack work I updated the address of the buffer.
+
+\subsection{Advanced level casper70}
+
+This level adds a check on the input, if there is a NOP it will stop the execution. To exploit this level I created a new environmental variable with the shellcode (and some NOP) and provided as input 668 A's and the address of the environmental variable.
+
+\subsection{Advanced level casper72}
+This level check if there are some non-ascii characters in the expected length of the buffer(666 bytes), to exploit this level I used the same script used for level casper70.
+
 
 \section{casper8}
 \subsection{Description}
@@ -348,6 +387,7 @@ The string provided as input is:
 
 \subsection{Mitigation}
 
+By adding the format specifier \texttt{\%s} to the printf in line 9 this attack is no longer possible since the string in input will be read as string and putting specifiers inside it will not have the desired effect.
 
 To make this program more secure it's better enable ASLR (Address Space Layout Randomization,)that will make more difficult to retrieve the address of the variable an attacker wants to change. 
 
