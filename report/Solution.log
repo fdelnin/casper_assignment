@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.12)  19 DEC 2018 00:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.12)  21 DEC 2018 01:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -357,35 +357,30 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 \openout4 = `Solution.toc'.
 
 
-[2]
-
-LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 22.
-
-[3]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 60.
+[2] [3]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 66.
  (/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 60.
- [4] [5] [6]
-[7] [8] [9] [10] [11] [12] [13] [14]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 405.
- [15]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 405.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 66.
+ [4] [5]
+[6] [7] [8] [9] [10] [11] [12] [13] [14] [15]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 441.
+ [16]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 441.
  (./Solution.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 405.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 405.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 441.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 441.
 Package rerunfilecheck Info: File `Solution.out' has not changed.
-(rerunfilecheck)             Checksum: 78999049F34EDF8060CC94E6760F67D9;2957.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 405.
+(rerunfilecheck)             Checksum: B2E2824C5B115AF2121DB260B4F6FC6C;3472.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 441.
  ) 
 Here is how much of TeX's memory you used:
- 7496 strings out of 494798
- 115144 string characters out of 6177668
- 214414 words of memory out of 5000000
- 10688 multiletter control sequences out of 15000+600000
+ 7520 strings out of 494798
+ 115492 string characters out of 6177668
+ 215417 words of memory out of 5000000
+ 10703 multiletter control sequences out of 15000+600000
  9446 words of font info for 34 fonts, out of 8000000 for 9000
  81 hyphenation exceptions out of 8191
  36i,9n,38p,589b,452s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -395,10 +390,10 @@ re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb></usr/share/te
 xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/t
 exmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on Solution.pdf (15 pages, 95173 bytes).
+Output written on Solution.pdf (16 pages, 97568 bytes).
 PDF statistics:
- 363 PDF objects out of 1000 (max. 8388607)
- 336 compressed objects within 4 object streams
- 75 named destinations out of 1000 (max. 500000)
- 377 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 408 PDF objects out of 1000 (max. 8388607)
+ 380 compressed objects within 4 object streams
+ 84 named destinations out of 1000 (max. 500000)
+ 441 words of extra memory for PDF output out of 10000 (max. 10000000)
 

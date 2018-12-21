@@ -5,7 +5,7 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{floatrow}
-
+\usepackage{float}
 
 \title{\scshape Casper wargame \\ Solutions}
 \author{Francesca Del Nin \\ student number: 0734630}
@@ -19,36 +19,42 @@
 \newpage
 \section{Overview}
 Passwords retrieved:
-\begin{table}[]
-\begin{tabular}{l|l|l}
+\begin{table}[H]
+\begin{tabular} {l|l|l}
  Level & Password & Time spent  \\
  \hline
- casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &   \\
- casper40 & hcRzYRX24hMUQfGN4comHv8pXgl7rgiK & \\
- casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY & \\
- casper42 & 1RbjDY7vpb1RvjvLiAN9skfLL3MTZABD & \\
-  \hline
- casper5 & LzroSg7w54LlHxKZbHVEGYj2UPs1WEUG & \\
- casper50 & SuzPtkbto6T8w0H43MQimqOoH7ntIoVh & \\
- casper51 & TOv1elxDKtaFgGfWTyyLQ2uzivxI36X4 & \\
- casper52 & rWhAgxz2U89eRx57LyCmEWunbCW39fAO & \\
-  \hline
+ casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &  3h \\
+ casper40 & hcRzYRX24hMUQfGN4comHv8pXgl7rgiK & 2h \\
+ casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY & 1h \\
+ casper42 & 1RbjDY7vpb1RvjvLiAN9skfLL3MTZABD & 1h \\
+ \hline
+ casper5 & LzroSg7w54LlHxKZbHVEGYj2UPs1WEUG & 30 min \\
+ casper50 & SuzPtkbto6T8w0H43MQimqOoH7ntIoVh & 30 min\\
+ casper51 & TOv1elxDKtaFgGfWTyyLQ2uzivxI36X4 & 30 min\\
+ casper52 & rWhAgxz2U89eRx57LyCmEWunbCW39fAO & 30 min\\
+ \hline
  casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o &  \\
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & \\
  casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & \\
  casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & \\
-  \hline
-  casper7 & OEhxYs88CiZLNXnFs3NV9Tu9IAY4CLhu & \\
-  casper70 & 5qxWx5fVrtK0g21indUP4MHEauEclQ3D & \\
-  casper71 & YojCanKvrijSB4rYLiG06BZiASkrChK9 & \\
-  casper72 & Yt8DOcwgDID1ie51GBP0SOLjMUHdBrvd & \\
-  \hline
+ \hline
+ casper7 & OEhxYs88CiZLNXnFs3NV9Tu9IAY4CLhu & 20 min\\ 
+ casper70 & 5qxWx5fVrtK0g21indUP4MHEauEclQ3D & 20 min \\
+ casper71 & YojCanKvrijSB4rYLiG06BZiASkrChK9 & 20 min\\              casper72 & Yt8DOcwgDID1ie51GBP0SOLjMUHdBrvd &  20 min\\
+ \hline
  casper8 & AAqtUL09LWefJlJFvTg0SpVg0j89DGe2 & \\
  casper80 & 5CS80xbUrxgjbrU3BBS5YslY00qoUd5J & \\
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w & \\
  casper82 & MABIQpR4omrMCmdc7PwxbRNm5EPHzYX5 & \\
-  \hline
- casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA &\\
+ \hline
+ casper9 & & \\
+ casper90 &   & \\
+ casper91 & & \\
+ casper92 & & \\
+ \hline
+	casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA & 2h \\
+	\hline \hline
+  	& & TOT: 33 h
 \end{tabular}
 \end{table}
 
@@ -333,6 +339,36 @@ This program checks for non-ascii characters inside the buffer, but just for the
 
 In particular the attack is the same as casper80 which has 682 byte between the buffer and the return address of the function (686 to overwrite it).
 
+\section{casper9}
+\subsection{Description}
+This program is similar to casper8 but it takes input from stdin instead from the terminal.
+
+\subsection{Vulnerability}
+This program is vulnerable because it uses \texttt{gets} function to get the input from the user, this function does not check for the length of the input.
+
+\subsection{Exploit description}
+
+To pass this level I used an environmental variable to store the "/bin/xh" string together with some spaces, filled the buffer (and everything between it and the return address) with some A's (678) in order to reach the return address and then the \texttt{system} function address followed by \texttt{exit} and the address of the environmental variable.
+
+\subsection{Mitigation}
+To make this program no longer vulnerable to this attack is possible to use \texttt{fgets} function which checks for the maximum length that can be taken in input.
+
+Also enabling ASLR makes more difficult to retrieve the addresses of the functions since they change at every execution.
+
+
+\subsection{Advanced level casper90}
+The same approach can be used for this level, but the distance between the buffer and the return address is now 682 bytes.
+
+\subsection{Advanced level casper91}
+
+To exploit this level (that cleans environmental variables) I decided to use the buffer itself to store the string "/bin/xh".
+
+\subsection{Advanced level casper92}
+The same exploit of casper90 works for casper92 since this program only checks for non ascii characters in the first 666 bytes in input.
+
+
+
+
 
 \section{casper10}
 
@@ -371,9 +407,9 @@ To make this attack work I have to retrieve the address of \texttt{isAdmin} vari
 
 To do so I will use the \texttt{\%n} parameter which writes the number of bytes already printed, into a variable we can choose, in this case \texttt{isAdmin}. Before being able to do so I need to move the stack pointer to a location where I can store the address of \texttt{isAdmin}, for example the beginning of the buffer.
 
-To move at the beginning of the buffer I use \texttt{\%x}, which reads from the stack and goes towards lower addresses (so towards the bottom of the stack), the buffer is stored in a lower address because is pushed into the stack before the call to the function \texttt{printf}.
+To move at the beginning of the buffer I use \texttt{\%x}, which reads from the stack and goes towards higher addresses (so towards the top of the stack), the buffer is stored in a higher address because is pushed into the stack before the call to the function \texttt{printf}.
 
-Filling the buffer with some A's characters and some \texttt{\%80x} parameters (08 makes it print in 8 digit exadecimal number) will print back the A's (x41), at this point I know the number of \texttt{\%x} parameter I need to reach the beginning of the buffer.
+Filling the buffer with some A's characters and some \texttt{\%80x} parameters (08 makes it print in 8 digit hexadecimal number) will print back the A's (x41), at this point I know the number of \texttt{\%x} parameter I need to reach the beginning of the buffer.
 
 At this point if I write the address of the variable instead of the first four 'A's and add a \texttt{\%n} parameter I'm able to write some value in that address, or in other words change the value of the flag.
 
@@ -399,7 +435,7 @@ To make this program more secure it's better enable ASLR (Address Space Layout R
 \item The shellcode used in all levels that require it is the one suggested in the assignment website, with one byte changed to launch /bin/xh instead of /bin/sh (replacing \textbackslash x73 with \textbackslash x78).
 
 
-\item All attacks can be launched using \texttt{make exploit\textit{n}}, all attacks except level 8 (and 80 81 82) can also be launched with \texttt{./exploit\textit{n}.sh}
+\item All attacks can be launched using \texttt{make exploit\textit{n}}.
 \end{enumerate}
 
 \end{document}
