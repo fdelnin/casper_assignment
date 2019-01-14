@@ -1,12 +1,7 @@
-
-*
-!/**/
-!*.*
 *.o
 *.hi
 *.zip
 *.tar.gz
-*~
 *.aux
 *.lof
 *.log
