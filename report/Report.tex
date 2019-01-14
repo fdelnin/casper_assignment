@@ -6,6 +6,9 @@
 \usepackage{caption}
 \usepackage{floatrow}
 \usepackage{float}
+\usepackage{tabularx}
+    \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
 
 \title{\scshape Casper wargame \\ Solutions}
 \author{Francesca Del Nin \\ student number: 0734630}
@@ -20,10 +23,11 @@
 \section{Overview}
 Passwords retrieved:
 \begin{table}[H]
-\begin{tabular} {l|l|l}
- Level & Password & Time spent  \\
+\centering
+\begin{tabularx}{\linewidth} {l|l|l}
+ Level & Password  &  \begin{tabular}{@{}c@{}}Approximate \\ time\end{tabular} \\
  \hline
- casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &  5h \\
+ casper4 & zssEylQhyfOdX0H7OOKFxEXG0iY9Y7PL &  8h \\
  casper40 & hcRzYRX24hMUQfGN4comHv8pXgl7rgiK & 1h \\
  casper41 & qQftts3uK2DjrNxfEPzXTyOpB20vMakY & 2h \\
  casper42 & 1RbjDY7vpb1RvjvLiAN9skfLL3MTZABD & 1h \\
@@ -33,10 +37,10 @@ Passwords retrieved:
  casper51 & TOv1elxDKtaFgGfWTyyLQ2uzivxI36X4 & 30 min\\
  casper52 & rWhAgxz2U89eRx57LyCmEWunbCW39fAO & 30 min\\
  \hline
- casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o & 3h \\ 
+ casper6 & l1BcWzPZaWMGOM0kaWimJmmT40KmDE9o & 5h \\ 
  casper60 & EoWZv5u7pnBkchLK30vXhiyH1sDexpCB & 1h\\
- casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & 1h \\ 
- casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & 2h \\ 
+ casper61 & K14irUGErx7IC3Gvh5ZdO5sIKt5eQCde & 2h \\ 
+ casper62 & qe3YqqaQSkvJhTEMxt68uUwemCc9d1WI & 1h \\ 
  \hline
  casper7 & OEhxYs88CiZLNXnFs3NV9Tu9IAY4CLhu & 30 min\\ 
  casper70 & 5qxWx5fVrtK0g21indUP4MHEauEclQ3D & 30 min \\
@@ -47,15 +51,15 @@ Passwords retrieved:
  casper81 & yMxdglE84E0NpXIXXRcukr8uEWkIHE6w &  1h\\ 
  casper82 & MABIQpR4omrMCmdc7PwxbRNm5EPHzYX5 & 1h \\ 
  \hline
- casper9 & Tr5upeGMqqat7Yrf6sbhP5TY7fpa95aV & 30 min \\
+ casper9 & Tr5upeGMqqat7Yrf6sbhP5TY7fpa95aV & 30 min  \\
  casper90 &  s5pSJqTCK5CURGigQOeh6eHgMgLgsqRB & 30 min \\
- casper91 &  cYzVFAGhOWesuPQUgTj9kMpkA7khzK31 & 30 min\\
+ casper91 &  cYzVFAGhOWesuPQUgTj9kMpkA7khzK31 & 30 min \\
  casper92 & XmGlzIMRNxlIoAfOKLvnqpEYd7dKOTl3 & 30 min\\
  \hline
-	casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA & 3h \\
+	casper10 & BpI02agB8PmOKDI1LRvMeQJWi2GrzgWA & 2h \\
 	\hline \hline
-  	& & TOT: 33 h
-\end{tabular}
+  	& & TOT: 38 h
+\end{tabularx}
 \end{table}
 
 \newpage
@@ -74,7 +78,7 @@ This program is vulnerable because it calls \texttt{strcpy} function passing the
 
 \subsection{Exploit description}
 
-To exploit this level I first needed to know how many characters fill the buffer and overwrite the return address of \texttt{greetUser}. To find this number I used gdb, put a breakpoint inside the \texttt{greetUser} function and run the program, the address found is 0xbffff146. Then, by using \texttt{info frame} command I am able to see at which address is stored the eip register where the return address is stored, the address is 0xbffff6bc. The distance between the two is 678 byte, so by adding another 4 byte I'm able to make a buffer overflow attack.
+To exploit this level I first needed to know how many characters fill the buffer and overwrite the return address of \texttt{greetUser}. To find this number I used gdb, put a breakpoint inside the \texttt{greetUser} function and ran the program, the address found is 0xbffff146. Then, by using \texttt{info frame} command I am able to see at which address is stored the eip register where the return address is stored, the address is 0xbffff6bc. The distance between the two is 678 byte, so by adding another 4 byte I'm able to make a buffer overflow attack.
 
 I provide as input a string of 682 byte in total composed as following:
 \begin{itemize}
@@ -94,7 +98,7 @@ The NOP instructions at the beginning of the buffer are to make the attack more 
 
 \subsection{Mitigation}
 
-Different things can be done to mitigate this attack: checking the length of the string copied to the buffer is a first thing that can void this attack. It's possible to do this by using the \texttt{strncpy} instead of \texttt{strcpy} which takes three arguments: the destination, the source (what I want to copy) and the maximum number of characters that can be copied.
+Different things can be done to mitigate this attack: checking the length of the string copied to the buffer is a first thing that can void this attack. It's possible to do this by using the \texttt{strncpy} instead of \texttt{strcpy} which takes three arguments: the destination, the source and the maximum number of characters that can be copied.
 
 Another thing that can be done is making the stack non-executable, so even in case of a buffer overflow no code inside the stack will be executed, but the overwrite of the return address is still possible. To make it more hard it's possible to add canaries that make easier to detect this kind of attack. Another measure that can help is enabling the ASLR (Address Space Layout Randomization) that makes it harder to get the correct address of the buffer since it changes at every execution of the program.
 
@@ -199,12 +203,12 @@ The string I pass as input is composed as follows:
 \item some NOP instruction(597 bytes)
 \item shellcode (21 bytes)
 \item some more NOP to fill the buffer an reach the function pointer (50 bytes)
-\item the address of the buffer (0x08049801)
+\item the address of the buffer
 \end{itemize}
 
-Since the address of the buffer can vary a bit, some NOP instructions at the beginning are necessary to make sure that the exploit is robust against small changes.
+Since the address of the buffer can vary a bit, some NOP instructions at the beginning are necessary to make sure that the exploit is robust against small changes. Also pointing to a slightly more higher address makes the attack more robust because it ensures that it's landing inside the buffer and not too low on the stack.
 
-The address of the buffer appears to contain the \textbackslash x00 value, which is ignored by the shell, so I changed the last byte to 01. In this case this small changes it's enough to land inside the buffer between the NOP instructions, but it's also possible to write a higher address to be sure that it's pointing inside the NOPs. 
+%The address of the buffer appears to contain the \textbackslash x00 value, which is ignored by the shell, so I changed the last byte to 01. In this case this small changes it's enough to land inside the buffer between the NOP instructions, but it's also possible to write a higher address to be sure that it's pointing inside the NOPs. 
 
 \subsection{Mitigation}
 
@@ -274,7 +278,7 @@ This level check if there are some non-ascii characters in the expected length o
 \section{casper8}
 \subsection{Description}
 
-This level prints a greeting to the user as the other levels, but in this case the stack is non-executable so it's not possible to do a stack based buffer overflow, but canaries are not enabled. The code it's the same as casper4.
+This level prints a greeting to the user as the other levels, but in this case the stack is non-executable so it's not possible to do a stack based buffer overflow, but canaries are not enabled. The code is the same as casper4.
 The relevant variable are:
 
 \begin{itemize}
@@ -288,22 +292,24 @@ In this case the vulnerability is given by the use of the \texttt{strcpy} functi
 
 \subsection{Exploit description} 
 
-To make this exploit work I first looked for how many input characters make the program go in segmentation fault, then I verified that I was overwriting the whole EIP register (where the return address is stored) using the "info frame" command after the execution of \texttt{strcpy} inside \texttt{greetUser}, in this way I discovered that I need a total of 682 byte to completely overwrite the return address of \texttt{greetUser}.
+To make this exploit work I first looked for how many input characters make the program in segmentation fault, then I verified that I was overwriting the whole EIP register (where the return address is stored) using the "info frame" command after the execution of \texttt{strcpy} inside \texttt{greetUser}, in this way I discovered that I need a total of 682 byte to completely overwrite the return address of \texttt{greetUser}.
 
 Then I searched for the address of the \texttt{system} function (which execute a shell command) inside libc, I used gdb command \texttt{p \&system} while running the program using make.
 
 Since I want to pass the string "/bin/xh" that is nowhere inside the library I can put it inside the buffer because even if the stack is non executable I can still use it to store arguments that can be passed to functions. In this case instead of NOP I used spaces to make some padding before and after "/bin/xh".
 
 %To make it possible to store spaces I can pass the variable inside the bash script through "". 
-To make it a cleaner attack I also searched for the address of the \texttt{exit} function inside the library to pass it as return address of the system function, in this case the program exits instead of going into segmentation fault.
+To make it a cleaner attack I also searched for the address of the \texttt{exit} function inside the library to pass it as return address of the system function, in this case the program exits instead of going in segmentation fault.
 
 The string in input looks as follows:
-\begin{enumerate}
+\begin{itemize}
+
 \item A string composed by a lot of spaces, "/bin/xh" and some other spaces (total of 678 bytes),
 \item \texttt{system} function address,
 \item \texttt{exit} function address,
 \item the address of the string.
-\end{enumerate}
+
+\end{itemize}
 
 To find the address of the string I used some A's and B's before and after /bin/xh respectively, in this way the first time I ran the program (using the buffer address) I was able to see where I was pointing and thus change a bit the address until /bin/xh showed up. At this point I put spaces and the attack worked.
 
