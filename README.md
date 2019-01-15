@@ -1,4 +1,4 @@
-# Casper wargame 
+# Casper Wargame 
 
 Assignment for Development of Secure Software course at KU Leuven University
 
